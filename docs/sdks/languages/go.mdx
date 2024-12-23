@@ -17,20 +17,19 @@ If you're working with Go Lang, the official [Infisical Go SDK](https://github.c
 package main
 
 import (
-  "fmt"
-  "os"
-  "context"
-  infisical "github.com/infisical/go-sdk"
+	"context"
+	"fmt"
+	infisical "github.com/infisical/go-sdk"
+	"os"
 )
 
 func main() {
-
 	client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
-		SiteUrl: "https://app.infisical.com", // Optional, default is https://app.infisical.com
-    AutoTokenRefresh: true, // Wether or not to let the SDK handle the access token lifecycle. Defaults to true if not specified.
+		SiteUrl:          "https://app.infisical.com", // Optional, default is https://app.infisical.com
+		AutoTokenRefresh: true,                        // Wether or not to let the SDK handle the access token lifecycle. Defaults to true if not specified.
 	})
 
-	_, err = client.Auth().UniversalAuthLogin("YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET")
+	_, err := client.Auth().UniversalAuthLogin("YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET")
 
 	if err != nil {
 		fmt.Printf("Authentication failed: %v", err)
@@ -50,7 +49,6 @@ func main() {
 	}
 
 	fmt.Printf("API Key Secret: %v", apiKeySecret)
-
 }
 ```
 
@@ -72,55 +70,41 @@ Import the SDK and create a client instance.
 
 ```go
 client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
-		SiteUrl: "https://app.infisical.com", // Optional, default is https://api.infisical.com
-	})
+	SiteUrl: "https://app.infisical.com", // Optional, default is https://api.infisical.com
+})
 ```
 
 ### Configuration Options
 
-<ParamField query="options" type="object">
-    <Expandable title="properties">
-        <ParamField query="SiteUrl" type="string" optional default="https://app.infisical.com">
-            The URL of the Infisical API..
-        </ParamField>
+| Field | Type | Description | Default value<br>(if not specified) | Required/optional |
+| :- | :-: | :- | :-: | :-: |
+| `SiteUrl` | string | The URL of the Infisical API | `https://app.infisical.com` | optional |
+| `UserAgent` | string | Set the user agent that will be used for HTTP requests. Do not modify this unless you have a reason to do so. | `infisical-go-sdk` | optional |
+| `AutoTokenRefresh` | boolean | Whether or not to let the SDK handle the access token lifecycle | `true` | optional |
+| `SilentMode` | boolean | Whether or not to suppress logs such as warnings from the token refreshing process | `false` | optional |
 
-        <ParamField query="UserAgent" type="string">
-            Optionally set the user agent that will be used for HTTP requests. _(Not recommended)_
-        </ParamField>
-
-        <ParamField query="AutoTokenRefresh" type="boolean" default={true} optional>
-            Whether or not to let the SDK handle the access token lifecycle. Defaults to true if not specified.
-        </ParamField>
-
-        <ParamField query="SilentMode" type="boolean" default={false} optional>
-            Whether or not to suppress logs such as warnings from the token refreshing process. Defaults to false if not specified.
-        </ParamField>
-    </Expandable>
-
-</ParamField>
-
-# Automatic token refreshing
+# Automatic Token Refreshing
 
 The Infisical Go SDK supports automatic token refreshing. After using one of the auth methods such as Universal Auth, the SDK will automatically renew and re-authenticate when needed.
 This behavior is enabled by default, but you can opt-out by setting `AutoTokenRefresh` to `false` in the client settings.
 
 ```go
-  client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
-    AutoTokenRefresh: false, // <- Disable automatic token refreshing
-  })
+client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
+	AutoTokenRefresh: false, // <- Disable automatic token refreshing
+})
 ```
 
 When using automatic token refreshing it's important to understand how your application uses the Infiiscal client. If you are instantiating new instances of the client often, it's important to cancel the context when the client is no longer needed to avoid the token refreshing process from running indefinitely.
 
 ```go
-  ctx, cancel := context.WithCancel(context.Background())
-  defer cancel() // Cancel the context when the client is no longer needed
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel() // Cancel the context when the client is no longer needed
 
-  client := infisical.NewInfisicalClient(ctx, infisical.Config{
-    AutoTokenRefresh: true,
-  })
+client := infisical.NewInfisicalClient(ctx, infisical.Config{
+	AutoTokenRefresh: true,
+})
 
-  // Use the client
+// Use the client
 ```
 
 This is only necessary if you are creating multiple instances of the client, and those instances are deleted or otherwise removed throughout the application lifecycle.
@@ -144,12 +128,13 @@ Call `.Auth().UniversalAuthLogin()` with empty arguments to use the following en
 _, err := client.Auth().UniversalAuthLogin("CLIENT_ID", "CLIENT_SECRET")
 
 if err != nil {
-  fmt.Println(err)
-  os.Exit(1)
+	fmt.Println(err)
+	os.Exit(1)
 }
 ```
 
 #### GCP ID Token Auth
+
 <Info>
   Please note that this authentication method will only work if you're running your application on Google Cloud Platform.
   Please [read more](/documentation/platform/identities/gcp-auth) about this authentication method.
@@ -166,8 +151,8 @@ Call `.Auth().GcpIdTokenAuthLogin()` with empty arguments to use the following e
 _, err := client.Auth().GcpIdTokenAuthLogin("YOUR_MACHINE_IDENTITY_ID")
 
 if err != nil {
-  fmt.Println(err)
-  os.Exit(1)
+	fmt.Println(err)
+	os.Exit(1)
 }
 ```
 
